@@ -1,11 +1,11 @@
 `timescale 1ns/1ps
 
 module control_unit (
-                    input clk,
-                    input rst,
-                    input go,
-                    input r_lt_y,
-                    input count_equ_0,
+                    input wire clk,
+                    input wire rst,
+                    input wire go,
+                    input wire r_lt_y,
+                    input wire count_equ_0,
                     
                     //for the updown counter
                     output reg ld,
@@ -33,14 +33,14 @@ module control_unit (
                     );
                                    
     reg [3:0] cs, ns;     
-    localparam s0 = 3'b000,
-               st1 = 3'b001,
-               st2 = 3'b010,
-               st3 = 3'b011,
-               s4 = 3'b100,
-               s5 = 3'b101,
-               s6 = 3'b110,
-               s7 = 3'b111;
+    localparam s0 = 4'b0000,
+               st1 = 4'b0001,
+               st2 = 4'b0010,
+               st3 = 4'b0011,
+               s4 = 4'b0100,
+               s5 = 4'b0101,
+               s6 = 4'b0110,
+               s7 = 4'b0111;
     assign CS = cs;
                
     initial begin
@@ -49,20 +49,22 @@ module control_unit (
     //input
     always @(go , r_lt_y, count_equ_0, cs) begin
         case(cs)
-            0:
+            0:begin
                 if(go == 1) ns = st1;
                 else ns = s0;
+              end
             1: ns = st2;
             2: ns = st3;
-            3: 
+            3: begin
                 if(r_lt_y) ns = s5;
                 else ns = s4;
-            4:
+                end
+            4: begin
                 if(count_equ_0) ns = st3;
-                else ns = s6; 
-            5:
+                else ns = s6; end
+            5: begin
                 if(count_equ_0) ns = st3;
-                else ns = s6;
+                else ns = s6; end
             6: ns = s7;
             7: ns = s0; 
             default: ns = s0;
@@ -71,8 +73,8 @@ module control_unit (
     
     //state reg
     always @(posedge clk) begin
-        if(rst == 1) cs <= s0;
-        else cs <= ns;
+        if(rst == 1) cs = s0;
+        else cs = ns;
     end
     
     // begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end 
