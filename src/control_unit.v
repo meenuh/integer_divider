@@ -18,6 +18,14 @@ module control_unit (
                     output reg cex,  
                     //output reg rightin,
                     //nothing for y. y doesn't shift
+                    /*
+                    output reg ldy,
+                    output reg sly,
+                    output reg sry,
+                    output reg cey,
+                    output reg rightY
+                    output reg rightL
+                    */
                     //shifter for R (does right shift)
                     output reg ldr,
                     output reg slr,
@@ -28,6 +36,7 @@ module control_unit (
                     output reg s1,
                     output reg s2,
                     output reg s3,
+                    
                     output reg done,
                     output wire [3:0] CS                   
                     );
