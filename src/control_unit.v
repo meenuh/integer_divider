@@ -29,7 +29,7 @@ module control_unit (
                     output reg s2,
                     output reg s3,
                     output reg done,
-                    output wire [2:0] CS               
+                    output wire [3:0] CS                   
                     );
                                    
     reg [3:0] cs, ns;     
@@ -50,7 +50,7 @@ module control_unit (
     always @(go , r_lt_y, count_equ_0, cs) begin
         case(cs)
             0:
-                if(go) ns = st1;
+                if(go == 1) ns = st1;
                 else ns = s0;
             1: ns = st2;
             2: ns = st3;
@@ -70,8 +70,8 @@ module control_unit (
     end
     
     //state reg
-    always @(posedge clk, rst) begin
-        if(rst) cs <= s0;
+    always @(posedge clk) begin
+        if(rst == 1) cs <= s0;
         else cs <= ns;
     end
     
