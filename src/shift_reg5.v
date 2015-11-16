@@ -15,7 +15,6 @@ module shift_reg5(clk, rst, sl, sr, ld, left_in, right_in, d, q);
 		else if(sl) begin
 			q[width-1:1] = q[width-2:0];
 			q[0] = right_in;
-			$display("r shift left");
 		end
 		else if(sr) begin
 			q[width-2:0] = q[width-1:1];

@@ -69,17 +69,15 @@ module control_unit (
 			  end
             1: ns = st2;
             2: ns = st3;
-            3: begin
+            3: 
                 if(r_lt_y) ns = s5;
-                else ns = s4;end
-            4: begin
+                else ns = s4;
+            4: 
                 if(count == 4'b0000) ns = s6;
                 else ns = st3; 
-                $display("count is %d", count);end
-            5: begin
+            5: 
                 if(count == 4'b0000) ns = s6;
                 else ns = st3; 
-                $display("count in 5 %d", count);end
             6: ns = s7;
             7: ns = s0; 
             default: ns = s0;
