@@ -4,7 +4,7 @@ module ud_counter(clk, rst, ud, ce, ld, d, q);
 	output reg[3:0] q;
 	
 	always@ (posedge clk) begin
-		if(!rst)
+		if(rst)
 			q = 4'b0;
 		else if(ce) begin
 			if(ld)

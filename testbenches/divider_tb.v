@@ -20,7 +20,7 @@ module divider_tb;
     reg [3:0] n;
     wire error, done;
     reg [3:0] dividend, divisor;
-    wire [3:0] remainder, quotient, cs;
+    wire [3:0] remainder, quotient, cs, count;
     divider test(
                 .go(go),
                 .clk(clk),
@@ -37,7 +37,7 @@ module divider_tb;
                 
     initial begin
         divisor = 3;
-        dividend = 10;
+        dividend = 4;
         rst = 0;
         n = 4;
         go = 1;
@@ -47,5 +47,8 @@ module divider_tb;
         clk = 1; #5;
         clk = 0; #5;
         end
+        $display("done");
+        $finish;
+
     end//end initial 
 endmodule

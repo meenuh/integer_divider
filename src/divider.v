@@ -18,7 +18,7 @@ module divider(
     wire [3:0] count;
     wire ld_count, ud_count, ce_count; //for up down counter
     wire ld_x,sl_x, sr_x, ce_x, right_in_x; //for x shifter
-    wire ld_r, sl_r, sr_r, ce_r; //for r shifter
+    wire ld_r, sl_r, sr_r, ce_r; //for Sr shifter
     wire ld_y;                  //y does not shift. nothing needed
     wire sel1, sel2, sel3;      //for the 3 muxes. only 2 are used but 3 for clarity
     wire r_lt_y, error;
@@ -73,4 +73,5 @@ module divider(
             .remainder(remainder), 
             .error(error)
             );
+
 endmodule
