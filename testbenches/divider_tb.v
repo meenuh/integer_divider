@@ -21,6 +21,7 @@ module divider_tb;
     wire error, done;
     reg [3:0] dividend, divisor;
     wire [3:0] remainder, quotient, cs, count;
+    integer i, j, expected, exp_remain;
     divider test(
                 .go(go),
                 .clk(clk),
@@ -36,17 +37,39 @@ module divider_tb;
                 );
                 
     initial begin
-        divisor = 3;
-        dividend = 4;
+        divisor = 0;
+        dividend = 0;
         rst = 0;
         n = 4;
         go = 1;
         #100;
-        while(!done)begin
         
-        clk = 1; #5;
-        clk = 0; #5;
-        end
+        for(i = 1; i < 4'b1111; i = i+1) begin
+            for(j = 0; j < 4'b1111; j = j + 1) begin
+                n = 4; #5;    
+                divisor = i;
+                dividend = j; #10;
+                expected = j / i; #5;
+                exp_remain = j % i; #5;
+                while(!done)begin
+                    clk = 1; #5;
+                    clk = 0; #5;
+                end
+
+                if(expected != quotient)begin
+                    $display("Incorrect quotient. Expected %d but got %d", expected, quotient);
+                    $stop;
+                end
+                
+                if(exp_remain != remainder) begin
+                    $display("incorrect remainder");
+                    $stop;
+                end
+                
+                clk = 1; #5;
+                clk = 0; #5;
+            end //inner for
+        end //outer for
         $display("done");
         $finish;
 
