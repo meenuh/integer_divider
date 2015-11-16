@@ -3,8 +3,8 @@ module ud_counter(clk, rst, ud, ce, ld, d, q);
 	input clk, rst, ud, ce, ld;
 	output reg[3:0] q;
 	
-	always@ (posedge clk, negedge rst) begin
-		if(!rst)
+	always@ (posedge clk) begin
+		if(rst)
 			q = 4'b0;
 		else if(ce) begin
 			if(ld)

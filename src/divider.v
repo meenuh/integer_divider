@@ -6,7 +6,7 @@ module divider(
                 input wire rst,
                 input wire [3:0] dividend,
                 input wire [3:0] divisor,
-                input wire n,
+                input wire [3:0] n,
                 
                 output wire [3:0] remainder,
                 output wire [3:0] quotient,
@@ -14,31 +14,39 @@ module divider(
                 output wire done,
                 output wire [3:0] cs
                 );
-                
-    wire [18:0] bus; //for signals between dp and cu
-    //in the order as they appear in control_unit m1
-    
+       
+    wire [3:0] count;
+    wire ld_count, ud_count, ce_count; //for up down counter
+    wire ld_x,sl_x, sr_x, ce_x, right_in_x; //for x shifter
+    wire ld_r, sl_r, sr_r, ce_r; //for Sr shifter
+    wire ld_y;                  //y does not shift. nothing needed
+    wire sel1, sel2, sel3;      //for the 3 muxes. only 2 are used but 3 for clarity
+    wire r_lt_y, error;
+
     control_unit m1(
-                    .r_lt_y(bus[0]),
-                    .count_equ_0(bus[1]),
-                    .ld(bus[2]),
-                    .ud(bus[3]),
-                    .ce(bus[4]),
-                    .ldx(bus[5]),
-                    .slx(bus[6]),
-                    .srx(bus[7]),
-                    .cex(bus[8]),
-                    .ldr(bus[9]),
-                    .slr(bus[10]),
-                    .srr(bus[11]),
-                    .cer(bus[12]),
-                    .s1(bus[13]),
-                    .s2(bus[14]),
-                    .s3(bus[15]),
+                    .r_lt_y(r_lt_y),
+                    .count(count),
+                    .ld(ld_count),
+                    .ud(ud_count),
+                    .ce(ce_count),
+                    .ldx(ld_x),
+                    .slx(sl_x),
+                    .srx(sr_x),
+                    .cex(ce_x),
+                    .ldr(ld_r),
+                    .slr(sl_r),
+                    .srr(sr_r),
+                    .cer(ce_r),
+                    .s1(sel1),
+                    .s2(sel2),
+                    .s3(sel3), //not needed
                     .done(done),
                     .CS(cs),
                     .go(go),
-                    .clk(clk)
+                    .clk(clk),
+                    .error(error),
+                    .right_in_x(right_in_x),
+                    .ld_y(ld_y)
                   );
     //module dp(in1, in2, clk, rst, ld_r, ld_x, ld_y, sl, sr, right_in_x, sel1, sel2, ld_cnt, ud, ce, n, r_lt_y, cnt_out, quotient, remainder, error);
     dp m2 (
@@ -46,22 +54,24 @@ module divider(
             .in2(divisor), 
             .clk(clk), 
             .rst(rst), 
-            .ld_r(bus[9]), 
-            .ld_x(bus[5]), 
-            .ld_y(bus[16]), 
-            .sl(), 
-            .sr(), 
-            .right_in_x(), 
-            .sel1(bus[13]), 
-            .sel2(bus[14]), 
-            .ld_cnt(bus[2]), 
-            .ud(bus[3]), 
-            .ce(bus[4]), 
+            .ld_r(ld_r), 
+            .ld_x(ld_x), 
+            .ld_y(ld_y), 
+            .sl_r(sl_r),
+            .sl_x(sl_x), 
+            .sr(sr_r), 
+            .right_in_x(right_in_x), 
+            .sel1(sel1), 
+            .sel2(sel2), 
+            .ld_cnt(ld_count), 
+            .ud(ud_count), 
+            .ce(ce_count), 
             .n(n), 
-            .r_lt_y(bus[0]), 
-            .cnt_out(bus[1]), 
+            .r_lt_y(r_lt_y), 
+            .cnt_out(count), 
             .quotient(quotient), 
             .remainder(remainder), 
             .error(error)
             );
+
 endmodule
