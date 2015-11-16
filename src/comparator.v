@@ -8,6 +8,7 @@ module comparator (in1, in2, lt_out);
 			lt_out = 1;
 		else
 			lt_out = 0;
+		$display("r_lt_y: %d", lt_out);
 	end
 
 endmodule

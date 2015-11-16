@@ -5,7 +5,8 @@ module control_unit (
                     input wire rst,
                     input wire go,
                     input wire r_lt_y,
-                    input wire count_equ_0,
+                    input wire [3:0] count, //to check if count is 0
+                    input wire error,
                     
                     //for the updown counter
                     output reg ld,
@@ -14,17 +15,16 @@ module control_unit (
                     //for the shifter x
                     output reg ldx,
                     output reg slx,
-                    output reg srx,
+                    output reg srx, //x only shifts left. not needed
                     output reg cex,  
+                    output reg right_in_x,
+					output reg ld_y,
                     //output reg rightin,
                     //nothing for y. y doesn't shift
                     /*
-                    output reg ldy,
                     output reg sly,
                     output reg sry,
                     output reg cey,
-                    output reg rightY
-                    output reg rightL
                     */
                     //shifter for R (does right shift)
                     output reg ldr,
@@ -56,24 +56,28 @@ module control_unit (
         cs = s0;
     end                 
     //input
-    always @(go , r_lt_y, count_equ_0, cs) begin
+    always @(go , r_lt_y, count, cs, error) begin
         case(cs)
             0:begin
-                if(go == 1) ns = st1;
-                else ns = s0;
-              end
+                if(go) begin
+					if(error == 1) ns = s0;
+					else ns = st1;
+				end
+                else begin
+					ns = s0;
+				end
+			  end
             1: ns = st2;
             2: ns = st3;
             3: begin
                 if(r_lt_y) ns = s5;
-                else ns = s4;
-                end
+                else ns = s4;end
             4: begin
-                if(count_equ_0) ns = st3;
-                else ns = s6; end
+                if(count == 4'b0000) ns = s6;
+                else ns = st3; end
             5: begin
-                if(count_equ_0) ns = st3;
-                else ns = s6; end
+                if(count == 4'b0000) ns = s6;
+                else ns = st3; end
             6: ns = s7;
             7: ns = s0; 
             default: ns = s0;
@@ -90,14 +94,21 @@ module control_unit (
     //output logic 
     always @(r_lt_y, cs) begin
         case(cs)
-            0: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end 
-            1: begin ld = 1; ud = 0; ce = 0; ldx = 1; slx = 0; srx = 0; cex = 0; ldr = 1; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end
-            2: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end
-            3: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end
-            4: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end
-            5: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 1; s2 = 0; s3 = 0; done = 0; end
-            6: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 1; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; end
-            7: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 1; end
+            0: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 1; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0; end 
+            1: begin ld = 1; ud = 0; ce = 1; ldx = 1; slx = 0; srx = 0; cex = 0; ldr = 1; slr = 0; srr = 0; cer = 0; s1 = 1; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 0;end
+            2: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0;end
+            3: begin 
+					ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; slr = 1; srr = 0; cer = 0; s2 = 0; s3 = 0; done = 0;   ld_y = 0;
+					if(r_lt_y) begin
+						s1 = 0; ldr = 0; right_in_x = 0;
+					end else begin
+						s1 = 1; ldr = 0; right_in_x = 1;
+					end
+				end
+            4: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0;end
+            5: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 1; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0;end
+            6: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 1; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0;end
+            7: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 1; ld_y = 0; right_in_x = 0;end
         endcase
     end              
 
