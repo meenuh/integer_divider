@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 11/09/2015 04:38:22 PM
+// Create Date: 11/09/2017 04:38:22 PM
 // Design Name: 
 // Module Name: cu_tb
 // Project Name: 
@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module cu_tb;
-    reg go, rst, clk, r_lt_y, count_equ_0;
+    reg go, rst, clk, r_lt_y;
     reg [3:0] count;
     reg [7:0] states; //keep track of which states we've gone through
     
@@ -55,107 +55,73 @@ module cu_tb;
     integer i, j;
                  
     initial begin
-		go = 0; rst = 0; clk = 0; states = 0; #10;
-    
-		clk = 1; #5;
-		clk = 0; #5;
-                
+		go = 0; rst = 0; clk = 0; states = 0; count = 4'b0100; #10;
+        clk = 1; #5;
+		clk = 0; #5;     
+		r_lt_y = 0; #5;		
 		while(states != 8'b11111111) begin
 			go = 1; #5;
-			states[cs] = 1;
-			clk = 1; #5;
-			clk = 0; #5;  
-			if(cs == 3)begin 
-			for(i = 3; i >=0; i = i - 1 )begin
-			     r_lt_y = 1; #5;
-			     count = i; #5;
-			     clk = 1; #5;
-			     clk = 0; #5;
-			
-			end   end    
-			/*case(cs)
+			states[cs] = 1;  
+			case(cs)
 				0:
-					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b0000000000000000)begin
-						$display("State %d is incorrect. Should be: 010000000000000 but got %b", cs, {ld, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
+					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00000000000000000)begin
+						$display("State %d is incorrect. Should be: 010000000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
 						$stop;
 					end
 				1: 
-					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b10010001000000010) begin
-						$display("State %d is incorrect. Should be: 110110000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
+					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b10110001000000010) begin
+						$display("State %d is incorrect. Should be: 110110000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
 						$stop;
 					end
 				2: 
-					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b000010001000000) begin
-						$display("State %d is incorrect. Should be: 101010000000000 but got %b", cs,{ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
+					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00101000100000010) begin
+						$display("State %d is incorrect. Should be: 101010000000000 but got %b", cs,{ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
 						$stop;
 					end 
-				3:
-					if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x}!= 15'b001010001000000) begin
-						$display("State %d is incorrect. Should be: 010000000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-						$stop;
-					 end
-				4:
-					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b001000000000000) begin
-						$display("State %d is incorrect. Should be: 001110111010000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-						$stop;
-					 end
+				3: begin
+						if(r_lt_y == 1)begin
+							if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00000000000000010) begin
+									$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
+									$stop;
+							end 
+						end else begin
+							if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'bb00000001000100011) begin
+								$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
+								$stop;
+							end
+						end
+						if(count == 1) begin 
+							r_lt_y = 1;
+						end else begin 
+							r_lt_y = 0;
+						end
+						if(count != 0) count = count - 4'b0001;
+                         else count = 0; #5;
+					end
+				4:	begin
+						 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00101000100000011) begin
+								$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
+								$stop;
+						end 
+					end //end case 4
 				5:
-					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b001010001001000) begin
-						$display("State %d is incorrect. Should be: 001110111010100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-						$stop;
-					 end
+					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00101000100100010) begin
+								$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
+								$stop;
+					end 
 				6:
-					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b000000000100000) begin
-						$display("State %d is incorrect. Should be: 001110111011000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
+					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00000000010000010) begin
+						$display("State %d is incorrect. Should be: 001110111011000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
 						$stop;
 					 end                    
 				7:
-					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b000000000000001) begin
-						$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
+					 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 17'b00000000000011110) begin
+						$display("State %d is incorrect. Should be: 001110111011100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x});
 						$stop;
 					 end   
 			endcase //end of case
-			if(cs == 3) begin
-                for(i = 0; i < 2; i = i + 1) begin
-                    states[cs] = 1;
-                    if(i == 1) r_lt_y = 1;
-                    clk = 1; #5;
-                    clk = 0; #5;
-                    if(cs == 3)
-						if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x}!= 15'b001010001000000) begin
-							$display("State %d is incorrect. Should be: 010000000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-							$stop;
-						 end
-					else if(cs ==4)
-						 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b001000000000000) begin
-							$display("State %d is incorrect. Should be: 001110111010000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-							$stop;
-						 end
-					else if(cs == 5) 
-						 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b001010001001000) begin
-							$display("State %d is incorrect. Should be: 001110111010100 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-							$stop;
-						 end
-                end // end for
-            end // end if
-            else if(cs == 4 || cs == 5) begin
-                for(j = 4; j <= 0; j = j - 1)begin
-                    if(j == 0) count_equ_0 = 1;
-                    clk = 1; #5;
-                    clk = 0; #5;
-					if(cs == 3)
-						if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x}!= 15'b001010001000000) begin
-							$display("State %d is incorrect. Should be: 010000000000000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-							$stop;
-						 end
-                    else if(cs == 6)
-						 if({ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done, ld_y, right_in_x} != 15'b000000000100000) begin
-							$display("State %d is incorrect. Should be: 001110111011000 but got %b", cs, {ld, ud, ce, ldx, slx, srx, cex, ldr, slr, srr, cer, s1, s2, s3, done});
-							$stop;
-						 end                    
-                    states[cs] = 1;
-                end // end for
-            end // end else if */
+			clk = 1; #5;
+			clk = 0; #5; 
 	   end //end of while
         
         $display("All tests passed");

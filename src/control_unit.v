@@ -94,20 +94,20 @@ module control_unit (
     //output logic 
     always @(r_lt_y, cs) begin
         case(cs)
-            0: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 0; ld_y = 0; right_in_x = 0; end 
-            1: begin ld = 1; ud = 0; ce = 1; ldx = 1; slx = 0; srx = 0; cex = 0; ldr = 1; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 0; ld_y = 1; right_in_x = 0;end
-            2: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 0; ld_y = 1; right_in_x = 0;end
-            3: begin 
-					ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; slr = 0; srr = 0; cer = 0; s2 = 1; s3 = 1; done = 0;   ld_y = 0;
+            0: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 0; right_in_x = 0; end 
+            1: begin ld = 1; ud = 0; ce = 1; ldx = 1; slx = 0; srx = 0; cex = 0; ldr = 1; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 0;end
+            2: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 0;end
+            3: begin
+					ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; slr = 0; srr = 0; cer = 0; s2 = 0; s3 = 0; done = 0; ld_y = 1;
 					if(r_lt_y) begin
 						s1 = 0; ldr = 0; right_in_x = 0;
 					end else begin
-						s1 = 1; ldr = 1; right_in_x = 1;
+						s1 = 1; ldr = 1; right_in_x = 1;	 
 					end
 				end
-            4: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 0; ld_y = 1; right_in_x = 1;end
-            5: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 1; s2 = 1; s3 = 1; done = 0; ld_y = 1; right_in_x = 0;end
-            6: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 1; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 0; ld_y = 1; right_in_x = 0;end
+            4: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 1;end
+            5: begin ld = 0; ud = 0; ce = 1; ldx = 0; slx = 1; srx = 0; cex = 0; ldr = 0; slr = 1; srr = 0; cer = 0; s1 = 1; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 0;end
+            6: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 1; cer = 0; s1 = 0; s2 = 0; s3 = 0; done = 0; ld_y = 1; right_in_x = 0;end
             7: begin ld = 0; ud = 0; ce = 0; ldx = 0; slx = 0; srx = 0; cex = 0; ldr = 0; slr = 0; srr = 0; cer = 0; s1 = 0; s2 = 1; s3 = 1; done = 1; ld_y = 1; right_in_x = 0;end
         endcase
     end              
