@@ -44,6 +44,15 @@ module divider_tb;
         go = 1;
         #100;
         
+        divisor = 0;
+        dividend = 1; 
+        clk = 1; #5;
+        clk = 0; #5;
+        if(error != 1) begin
+            $display("Divide by 0 should be error");
+            $stop;
+        end
+        
         for(i = 1; i < 4'b1111; i = i+1) begin
             for(j = 0; j < 4'b1111; j = j + 1) begin
                 n = 4; #5;    
@@ -70,7 +79,7 @@ module divider_tb;
                 clk = 0; #5;
             end //inner for
         end //outer for
-        $display("done");
+        $display("All tests passed");
         $finish;
 
     end//end initial 
